@@ -24,9 +24,9 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	r, err := client.CreateZaposlen(ctx, &dopust.CreateZaposlenRequest{Ime: "Kralj", Priimek: "Matjaz",
+	r, err := client.CreateZaposlen(ctx, &dopust.CreateZaposlenRequest{Ime: "Gozdni", Priimek: "Joza",
 
-		Spol: "Moski", DatumRojstva: "1948-03-01", Podjetje: "Mercator d.o.o."})
+		Spol: "Moski", DatumRojstva: "1938-02-01", Podjetje: "Spar d.o.o."})
 	if err != nil {
 		log.Fatalf("Napaka pri kreiranju zaposlenega -> %v", err)
 	}
@@ -39,8 +39,8 @@ func main() {
 	Datum rojstva -> %s
 	Podjetje -> %s`, r.GetIdZaposlenega(), r.GetIme(), r.GetPriimek(), r.GetSpol(), r.GetDatumRojstva(), r.GetPodjetje())
 
-	r2, err := client.CreateDopust(ctx, &dopust.CreateDopustRequest{IdZaposlenega: 2, DatumZacetka: "2021-06-07",
-		DatumKonca: "2021-06-30", VrstaDopusta: "Letni", StevilkaDopusta: 1})
+	r2, err := client.CreateDopust(ctx, &dopust.CreateDopustRequest{IdZaposlenega: 1, DatumZacetka: "2022-06-07",
+		DatumKonca: "2023-06-30", VrstaDopusta: "Letni", StevilkaDopusta: 2})
 	if err != nil {
 		log.Fatalf("Napaka pri kreiranju dopusta -> %v", err)
 	}

@@ -29,6 +29,7 @@ func (s *Server) CreateZaposlen(ctx context.Context, in *CreateZaposlenRequest) 
 		if os.IsNotExist(err) {
 			fmt.Printf("Error -> File not found. Creating new file\n", "zaposleni.json")
 			zaposlen_list.Zaposleni = append(zaposlen_list.Zaposleni, kreiranUporabnik)
+
 			jsonBytes, err := protojson.Marshal(zaposlen_list)
 			if err != nil {
 				log.Fatalf("Napaka pri Marshalanju: %v", err)
@@ -76,7 +77,7 @@ func (s *Server) CreateDopust(ctx context.Context, in *CreateDopustRequest) (*Do
 		if os.IsNotExist(err) {
 			fmt.Printf("Error -> File not found. Creating new file\n", "dopusti.json")
 			dopust_list.Dopusti = append(dopust_list.Dopusti, kreiranDopust)
-			jsonBytes, err := protojson.Marshal(kreiranDopust)
+			jsonBytes, err := protojson.Marshal(dopust_list)
 			if err != nil {
 				log.Fatalf("Napaka pri Marshalanju: %v", err)
 			}
@@ -95,7 +96,7 @@ func (s *Server) CreateDopust(ctx context.Context, in *CreateDopustRequest) (*Do
 	}
 
 	dopust_list.Dopusti = append(dopust_list.Dopusti, kreiranDopust)
-	jsonBytes, err := protojson.Marshal(kreiranDopust)
+	jsonBytes, err := protojson.Marshal(dopust_list)
 
 	if err != nil {
 		log.Fatalf("JSON marshilanje failed -> %v", err)

@@ -39,7 +39,7 @@ func (s *Server) CreateZaposlen(ctx context.Context, in *CreateZaposlenRequest) 
 			}
 			return kreiranUporabnik, nil
 		} else {
-			log.Fatalf("Napaka ppri branju datoteke -> %v", err)
+			log.Fatalf("Napaka pri branju datoteke -> %v", err)
 		}
 	}
 
@@ -59,6 +59,53 @@ func (s *Server) CreateZaposlen(ctx context.Context, in *CreateZaposlenRequest) 
 	}
 
 	return kreiranUporabnik, nil
+}
+
+func (s *Server) CreateDopust(ctx context.Context, in *CreateDopustRequest) (*Dopust, error) {
+	log.Printf("Prejeto -> %v", in.GetStevilkaDopusta())
+
+	readBytes, err := ioutil.ReadFile("dopusti.json")
+	var dopust_list *DopustList = &DopustList{}
+	var dopust_id = int64(rand.Intn(1000))
+
+	kreiranDopust := &Dopust{IdDopust: dopust_id, IdZaposlenega: in.GetIdZaposlenega(),
+		DatumZacetka: in.GetDatumZacetka(), DatumKonca: in.GetDatumKonca(),
+		VrstaDopusta: in.GetVrstaDopusta(), StevilkaDopusta: in.GetStevilkaDopusta()}
+
+	if err != nil {
+		if os.IsNotExist(err) {
+			fmt.Printf("Error -> File not found. Creating new file\n", "dopusti.json")
+			dopust_list.Dopusti = append(dopust_list.Dopusti, kreiranDopust)
+			jsonBytes, err := protojson.Marshal(kreiranDopust)
+			if err != nil {
+				log.Fatalf("Napaka pri Marshalanju: %v", err)
+			}
+
+			if err := ioutil.WriteFile("dopusti.json", jsonBytes, 0664); err != nil {
+				log.Fatalf("Napaka pri pisanju v file -> %v", err)
+			}
+			return kreiranDopust, nil
+		} else {
+			log.Fatalf("Napaka pri branju datoteke -> %v", err)
+		}
+	}
+
+	if err := protojson.Unmarshal(readBytes, dopust_list); err != nil {
+		log.Fatalf("Napaka pri parasnju jsona -> %v", err)
+	}
+
+	dopust_list.Dopusti = append(dopust_list.Dopusti, kreiranDopust)
+	jsonBytes, err := protojson.Marshal(kreiranDopust)
+
+	if err != nil {
+		log.Fatalf("JSON marshilanje failed -> %v", err)
+	}
+
+	if err := ioutil.WriteFile("dopusti.json", jsonBytes, 0664); err != nil {
+		log.Fatalf("Napaka pri pisanju v datoteko -> %v", err)
+	}
+
+	return kreiranDopust, nil
 }
 
 func (s *Server) GetDopustRequest(ctx context.Context, GetDopustRequest *GetDopustRequest) (*Dopust, error) {

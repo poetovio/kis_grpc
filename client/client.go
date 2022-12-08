@@ -53,4 +53,9 @@ func main() {
 	Stevilka dopusta -> %d. dopust
 	`, r2.GetIdDopust(), r2.GetDatumZacetka(), r2.GetDatumKonca(), r2.GetVrstaDopusta(), r2.GetStevilkaDopusta())
 
+	r3, err := client.DeleteDopust(ctx, &dopust.GetDopustRequest{IdDopust: 59})
+	if err != nil {
+		log.Fatalf("Napaka pri brisanju dopusta -> %v", err)
+	}
+	log.Printf("Brisanje je bilo uspesno? -> %t", r3.GetSuccess())
 }

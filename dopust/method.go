@@ -114,3 +114,37 @@ func (s *Server) GetDopustRequest(ctx context.Context, GetDopustRequest *GetDopu
 
 	return &Dopust{IdDopust: 1, IdZaposlenega: 2, DatumZacetka: "2022-03-03", DatumKonca: "2022-03-05"}, nil
 }
+
+func (s *Server) DeleteDopust(ctx context.Context, input *GetDopustRequest) (*DeleteDopustResponse, error) {
+	readBytes, err := ioutil.ReadFile("dopusti.json")
+	if err != nil {
+		log.Fatalf("Napaka pri branju datoteke -> %v", err)
+	}
+
+	var dopust_list *DopustList = &DopustList{}
+
+	if err := protojson.Unmarshal(readBytes, dopust_list); err != nil {
+		log.Fatalf("Napaka pri parasnju jsona -> %v", err)
+	}
+
+	for id, dopust := range dopust_list.Dopusti {
+		if dopust.GetIdDopust() == input.GetIdDopust() {
+			copy(dopust_list.Dopusti[id:], dopust_list.Dopusti[id+1:])
+			dopust_list.Dopusti[len(dopust_list.Dopusti)-1] = nil
+			dopust_list.Dopusti = dopust_list.Dopusti[:len(dopust_list.Dopusti)-1]
+		}
+	}
+
+	// dopust_list.Dopusti = append(dopust_list.Dopusti, kreiranDopust)
+	jsonBytes, err := protojson.Marshal(dopust_list)
+
+	if err != nil {
+		log.Fatalf("JSON marshilanje failed -> %v", err)
+	}
+
+	if err := ioutil.WriteFile("dopusti.json", jsonBytes, 0664); err != nil {
+		log.Fatalf("Napaka pri pisanju v datoteko -> %v", err)
+	}
+
+	return &DeleteDopustResponse{Success: true}, nil
+}

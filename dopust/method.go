@@ -21,6 +21,30 @@ type StreamServer struct {
 }
 */
 
+func (s *Server) GetZaposlen(ctx context.Context, input *GetEnZaposlenRequest) (*Zaposlen, error) {
+	readBytes, err := ioutil.ReadFile("zaposleni.json")
+	if err != nil {
+		log.Fatalf("Napaka pri branju datoteke -> %v", err)
+	}
+
+	var zaposlen_list *ZaposlenList = &ZaposlenList{}
+
+	if err := protojson.Unmarshal(readBytes, zaposlen_list); err != nil {
+		log.Fatalf("Napaka pri parasnju jsona -> %v", err)
+	}
+
+	for _, zaposlen := range zaposlen_list.Zaposleni {
+		if zaposlen.GetIdZaposlenega() == input.IdZaposlen {
+			kreiranZaposlen := &Zaposlen{IdZaposlenega: zaposlen.GetIdZaposlenega(), Ime: zaposlen.GetIme(), Priimek: zaposlen.GetPriimek(),
+				Spol: zaposlen.GetSpol(), DatumRojstva: zaposlen.GetDatumRojstva(), Podjetje: zaposlen.GetPodjetje()}
+
+			return kreiranZaposlen, nil
+		}
+	}
+
+	return nil, nil
+}
+
 func (s *Server) CreateZaposlen(ctx context.Context, in *CreateZaposlenRequest) (*Zaposlen, error) {
 	log.Printf("Prejeto -> %v", in.GetIme())
 

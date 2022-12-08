@@ -10,6 +10,8 @@ service DopustService {
     rpc UpdateDopust (UpdateDopustRequest) returns (Dopust) {}
     rpc DeleteDopust (GetDopustRequest) returns (DeleteDopustResponse) {}
 
+    rpc GetZaposlen (GetEnZaposlenRequest) returns (Zaposlen) {}
+
     rpc CreateZaposlen (CreateZaposlenRequest) returns (Zaposlen) {}
 
     rpc GetZaposleni (GetZaposleniParams) returns (ZaposlenList) {}
@@ -114,4 +116,17 @@ message DatumStreamResponse {
     string datumKonca = 4;
     string vrstaDopusta = 5;
     int64 stevilkaDopusta = 6; 
+}
+
+message GetEnZaposlenRequest {
+    int64 id_zaposlen = 1;
+}
+
+message GetZaposlenResponse {
+    int64 id_zaposlenega = 1;
+    string ime = 2;
+    string priimek = 3;
+    string spol = 4;
+    string datumRojstva = 5;
+    string podjetje = 6;
 }

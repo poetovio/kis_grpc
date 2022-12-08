@@ -26,6 +26,7 @@ type DopustServiceClient interface {
 	GetDopust(ctx context.Context, in *GetDopustRequest, opts ...grpc.CallOption) (*Dopust, error)
 	UpdateDopust(ctx context.Context, in *UpdateDopustRequest, opts ...grpc.CallOption) (*Dopust, error)
 	DeleteDopust(ctx context.Context, in *GetDopustRequest, opts ...grpc.CallOption) (*DeleteDopustResponse, error)
+	GetZaposlen(ctx context.Context, in *GetEnZaposlenRequest, opts ...grpc.CallOption) (*Zaposlen, error)
 	CreateZaposlen(ctx context.Context, in *CreateZaposlenRequest, opts ...grpc.CallOption) (*Zaposlen, error)
 	GetZaposleni(ctx context.Context, in *GetZaposleniParams, opts ...grpc.CallOption) (*ZaposlenList, error)
 	UpdateZaposlen(ctx context.Context, in *UpdateZaposlenRequest, opts ...grpc.CallOption) (*Zaposlen, error)
@@ -76,6 +77,15 @@ func (c *dopustServiceClient) DeleteDopust(ctx context.Context, in *GetDopustReq
 	return out, nil
 }
 
+func (c *dopustServiceClient) GetZaposlen(ctx context.Context, in *GetEnZaposlenRequest, opts ...grpc.CallOption) (*Zaposlen, error) {
+	out := new(Zaposlen)
+	err := c.cc.Invoke(ctx, "/dopust.DopustService/GetZaposlen", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *dopustServiceClient) CreateZaposlen(ctx context.Context, in *CreateZaposlenRequest, opts ...grpc.CallOption) (*Zaposlen, error) {
 	out := new(Zaposlen)
 	err := c.cc.Invoke(ctx, "/dopust.DopustService/CreateZaposlen", in, out, opts...)
@@ -120,6 +130,7 @@ type DopustServiceServer interface {
 	GetDopust(context.Context, *GetDopustRequest) (*Dopust, error)
 	UpdateDopust(context.Context, *UpdateDopustRequest) (*Dopust, error)
 	DeleteDopust(context.Context, *GetDopustRequest) (*DeleteDopustResponse, error)
+	GetZaposlen(context.Context, *GetEnZaposlenRequest) (*Zaposlen, error)
 	CreateZaposlen(context.Context, *CreateZaposlenRequest) (*Zaposlen, error)
 	GetZaposleni(context.Context, *GetZaposleniParams) (*ZaposlenList, error)
 	UpdateZaposlen(context.Context, *UpdateZaposlenRequest) (*Zaposlen, error)
@@ -142,6 +153,9 @@ func (UnimplementedDopustServiceServer) UpdateDopust(context.Context, *UpdateDop
 }
 func (UnimplementedDopustServiceServer) DeleteDopust(context.Context, *GetDopustRequest) (*DeleteDopustResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteDopust not implemented")
+}
+func (UnimplementedDopustServiceServer) GetZaposlen(context.Context, *GetEnZaposlenRequest) (*Zaposlen, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetZaposlen not implemented")
 }
 func (UnimplementedDopustServiceServer) CreateZaposlen(context.Context, *CreateZaposlenRequest) (*Zaposlen, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateZaposlen not implemented")
@@ -240,6 +254,24 @@ func _DopustService_DeleteDopust_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DopustService_GetZaposlen_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetEnZaposlenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DopustServiceServer).GetZaposlen(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dopust.DopustService/GetZaposlen",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DopustServiceServer).GetZaposlen(ctx, req.(*GetEnZaposlenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DopustService_CreateZaposlen_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateZaposlenRequest)
 	if err := dec(in); err != nil {
@@ -334,6 +366,10 @@ var DopustService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteDopust",
 			Handler:    _DopustService_DeleteDopust_Handler,
+		},
+		{
+			MethodName: "GetZaposlen",
+			Handler:    _DopustService_GetZaposlen_Handler,
 		},
 		{
 			MethodName: "CreateZaposlen",

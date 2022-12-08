@@ -97,6 +97,19 @@ func main() {
 	Datum rojstva -> %s
 	Podjetje -> %s`, r6.GetIdZaposlenega(), r6.GetIme(), r6.GetPriimek(), r6.GetSpol(), r6.GetDatumRojstva(), r6.GetPodjetje())
 
+	r7, err := client.GetZaposlen(ctx, &dopust.GetEnZaposlenRequest{IdZaposlen: 425})
+	if err != nil {
+		log.Fatalf("Napaka pri pridobitvi enega zaposlenega -> %v", err)
+	}
+
+	log.Printf(`Podatki zaposlenega -> 
+	ID -> %d
+	Ime -> %s
+	Priimek -> %s
+	Spol -> %s
+	Datum rojstva -> %s
+	Podjetje -> %s`, r7.GetIdZaposlenega(), r7.GetIme(), r7.GetPriimek(), r7.GetSpol(), r7.GetDatumRojstva(), r7.GetPodjetje())
+
 	/*
 		r7, err := client2.DopustStream(ctx, &dopust.GetDopustiRequest{})
 		if err != nil {
@@ -167,6 +180,8 @@ func main() {
 						Stevilka dopusta -> %d. dopust
 						`, j, sporocilo.GetId(), sporocilo.GetIdZaposlenega(), sporocilo.GetDatumZacetka(), sporocilo.GetDatumKonca(),
 				sporocilo.GetVrstaDopusta(), sporocilo.GetStevilkaDopusta())
+
+			j += 1
 		}
 	}()
 

@@ -64,4 +64,18 @@ func main() {
 		log.Fatalf("Napaka pri brisanju zaposlenega -> %v", err)
 	}
 	log.Printf("Brisanje zaposlenega je bilo uspesno? -> %t", r4.GetSuccess())
+
+	r5, err := client.UpdateDopust(ctx, &dopust.UpdateDopustRequest{Id: 887, IdZaposlenega: 2,
+		DatumZacetka: "2017-12-04", DatumKonca: "2017-12-10", VrstaDopusta: "Zimski", StevilkaDopusta: 3})
+	if err != nil {
+		log.Fatalf("Napaka pri posodobitvi dopusta -> %v", err)
+	}
+
+	log.Printf(`Podatki o dopustu ->
+	ID -> %d
+	Datum zacetka -> %s
+	Datum konca -> %s
+	Vrsta dopusta -> %s
+	Stevilka dopusta -> %d. dopust
+	`, r5.GetIdDopust(), r5.GetDatumZacetka(), r5.GetDatumKonca(), r5.GetVrstaDopusta(), r5.GetStevilkaDopusta())
 }

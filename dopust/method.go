@@ -180,3 +180,35 @@ func (s *Server) DeleteZaposlen(ctx context.Context, input *GetZaposlenRequest) 
 
 	return &DeleteZaposlenResponse{Success: true}, nil
 }
+
+func (s *Server) UpdateDopust(ctx context.Context, input *UpdateDopustRequest) (*Dopust, error) {
+	readBytes, err := ioutil.ReadFile("dopusti.json")
+	var dopust_list *DopustList = &DopustList{}
+	var updejtanId int64 = input.GetId()
+
+	kreiranDopust := &Dopust{IdDopust: updejtanId, IdZaposlenega: input.GetIdZaposlenega(),
+		DatumZacetka: input.GetDatumZacetka(), DatumKonca: input.GetDatumKonca(),
+		VrstaDopusta: input.GetVrstaDopusta(), StevilkaDopusta: input.GetStevilkaDopusta()}
+
+	if err := protojson.Unmarshal(readBytes, dopust_list); err != nil {
+		log.Fatalf("Napaka pri parasnju jsona -> %v", err)
+	}
+
+	for id, dopust := range dopust_list.Dopusti {
+		if dopust.GetIdDopust() == updejtanId {
+			dopust_list.Dopusti[id] = kreiranDopust
+		}
+	}
+
+	jsonBytes, err := protojson.Marshal(dopust_list)
+
+	if err != nil {
+		log.Fatalf("JSON marshilanje failed -> %v", err)
+	}
+
+	if err := ioutil.WriteFile("dopusti.json", jsonBytes, 0664); err != nil {
+		log.Fatalf("Napaka pri pisanju v datoteko -> %v", err)
+	}
+
+	return kreiranDopust, nil
+}

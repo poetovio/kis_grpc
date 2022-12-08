@@ -15,6 +15,12 @@ type Server struct {
 	UnimplementedDopustServiceServer
 }
 
+/*
+type StreamServer struct {
+	UnimplementedStreamDopustServer
+}
+*/
+
 func (s *Server) CreateZaposlen(ctx context.Context, in *CreateZaposlenRequest) (*Zaposlen, error) {
 	log.Printf("Prejeto -> %v", in.GetIme())
 
@@ -109,11 +115,41 @@ func (s *Server) CreateDopust(ctx context.Context, in *CreateDopustRequest) (*Do
 	return kreiranDopust, nil
 }
 
-func (s *Server) GetDopustRequest(ctx context.Context, GetDopustRequest *GetDopustRequest) (*Dopust, error) {
-	log.Printf("Prejeli smo dopust od client-a: %d", GetDopustRequest.IdDopust)
+/*
+func (s *Server) DopustStream(ctx context.Context, input *GetDopustiRequest, serv StreamDopust_DopustStreamServer) error {
+	var wg sync.WaitGroup
 
-	return &Dopust{IdDopust: 1, IdZaposlenega: 2, DatumZacetka: "2022-03-03", DatumKonca: "2022-03-05"}, nil
+	readBytes, err := ioutil.ReadFile("dopusti.json")
+	if err != nil {
+		log.Fatalf("Napaka pri branju datoteke -> %v", err)
+	}
+
+	var dopust_list *DopustList = &DopustList{}
+
+	if err := protojson.Unmarshal(readBytes, dopust_list); err != nil {
+		log.Fatalf("Napaka pri parasnju jsona -> %v", err)
+	}
+
+	for id, dopust := range dopust_list.Dopusti {
+		wg.Add(1)
+		go func(count int64) {
+			defer wg.Done()
+
+			time.Sleep(time.Duration(count) * time.Millisecond)
+
+			if err := serv.Send(dopust.DatumZacetka); err != nil {
+				log.Printf("Napaka pri izvajanju streama! -> %v", err)
+			}
+			log.Printf("Zakljucen request #%d", id)
+
+		}(int64(id * 200))
+	}
+
+	wg.Wait()
+
+	return nil
 }
+*/
 
 func (s *Server) DeleteDopust(ctx context.Context, input *GetDopustRequest) (*DeleteDopustResponse, error) {
 	readBytes, err := ioutil.ReadFile("dopusti.json")

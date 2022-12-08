@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+	"io"
 	"log"
 	"time"
 
@@ -20,6 +22,7 @@ func main() {
 	defer connection.Close()
 
 	client := dopust.NewDopustServiceClient(connection)
+	client2 := dopust.NewStreamDopustClient(connection)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -94,4 +97,85 @@ func main() {
 	Datum rojstva -> %s
 	Podjetje -> %s`, r6.GetIdZaposlenega(), r6.GetIme(), r6.GetPriimek(), r6.GetSpol(), r6.GetDatumRojstva(), r6.GetPodjetje())
 
+	/*
+		r7, err := client2.DopustStream(ctx, &dopust.GetDopustiRequest{})
+		if err != nil {
+			log.Fatalf("Error pri odpiranju streama -> %v", err)
+		}
+
+		done := make(chan bool)
+
+		go func() {
+			log.Printf("Vsi datumi ->\n")
+
+			j := 1
+
+			for {
+				response, err := r7.Recv()
+				if err == io.EOF {
+					done <- true // stream is finished
+					return
+				}
+				if err != nil {
+					log.Fatalf("Napaka pri izvajanju streama!!! -> %v", err)
+				}
+
+				log.Printf("Datum zacetka dopusta %d -> %s", j, response)
+
+				log.Printf(`Podatki o %d. dopustu ->
+						ID -> %d
+						Datum zacetka -> %s
+						Datum konca -> %s
+						Vrsta dopusta -> %s
+						Stevilka dopusta -> %d. dopust
+						`, j, response.GetIdDopust(), response.GetDatumZacetka(), response.GetDatumKonca(),
+					response.GetVrstaDopusta(), response.GetStevilkaDopusta())
+
+				j += 1
+			}
+		}()
+
+		<-done
+
+		log.Printf("Koncano")
+
+	*/
+
+	stream, err := client2.DopustStream(context.Background(), &dopust.GetDopustiRequest{})
+	if err != nil {
+		log.Fatalf("Napaka pri odpiranju streama Datum -> %v", err)
+	}
+
+	go func() {
+		j := 1
+
+		for {
+			sporocilo, err := stream.Recv()
+			if err == io.EOF {
+				return
+			}
+			if err != nil {
+				log.Fatalln("Napaka pri sprejemanju sporocila iz strema", err)
+			}
+
+			log.Printf(`Podatki o %d. dopustu ->
+						ID -> %d
+						ID zaposlenega -> %d
+						Datum zacetka -> %s
+						Datum konca -> %s
+						Vrsta dopusta -> %s
+						Stevilka dopusta -> %d. dopust
+						`, j, sporocilo.GetId(), sporocilo.GetIdZaposlenega(), sporocilo.GetDatumZacetka(), sporocilo.GetDatumKonca(),
+				sporocilo.GetVrstaDopusta(), sporocilo.GetStevilkaDopusta())
+		}
+	}()
+
+	for {
+		select {
+		case <-stream.Context().Done():
+			fmt.Println("Complete")
+			stream.CloseSend()
+			return
+		}
+	}
 }

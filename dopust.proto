@@ -7,7 +7,6 @@ option go_package = "./";
 service DopustService {
     rpc CreateDopust (CreateDopustRequest) returns (Dopust) {}
     rpc GetDopust (GetDopustRequest) returns (Dopust) {}
-    rpc GetDopusti (GetDopustiRequest) returns (stream Dopust) {}
     rpc UpdateDopust (UpdateDopustRequest) returns (Dopust) {}
     rpc DeleteDopust (GetDopustRequest) returns (DeleteDopustResponse) {}
 
@@ -16,6 +15,10 @@ service DopustService {
     rpc GetZaposleni (GetZaposleniParams) returns (ZaposlenList) {}
     rpc UpdateZaposlen (UpdateZaposlenRequest) returns (Zaposlen) {}
     rpc DeleteZaposlen (GetZaposlenRequest) returns (DeleteZaposlenResponse) {}
+}
+
+service StreamDopust {
+    rpc DopustStream (GetDopustiRequest) returns (stream DatumStreamResponse) {}
 }
 
 message Dopust {
@@ -73,10 +76,7 @@ message DeleteDopustResponse {
     bool success = 1;
 }
 
-message GetDopustiRequest {
-    optional int64 page = 1;
-    optional int64 limit = 2;
-}
+message GetDopustiRequest {}
 
 message GetZaposleniParams {}
 
@@ -105,4 +105,13 @@ message UpdateZaposlenRequest {
     string spol = 4;
     string datumRojstva = 5;
     string podjetje = 6;
+}
+
+message DatumStreamResponse {
+    int64 id = 1;
+    int64 id_zaposlenega = 2;
+    string datumZacetka = 3;
+    string datumKonca = 4;
+    string vrstaDopusta = 5;
+    int64 stevilkaDopusta = 6; 
 }

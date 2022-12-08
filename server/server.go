@@ -20,10 +20,12 @@ func main() {
 	}
 
 	server := dopust.Server{}
+	server2 := dopust.StreamServer{}
 
 	grpcServer := grpc.NewServer()
 
 	dopust.RegisterDopustServiceServer(grpcServer, &server)
+	dopust.RegisterStreamDopustServer(grpcServer, &server2)
 
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("Failed to serve gRPC: %v", err)

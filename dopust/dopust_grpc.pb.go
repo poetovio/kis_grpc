@@ -24,7 +24,6 @@ const _ = grpc.SupportPackageIsVersion7
 type DopustServiceClient interface {
 	CreateDopust(ctx context.Context, in *CreateDopustRequest, opts ...grpc.CallOption) (*Dopust, error)
 	GetDopust(ctx context.Context, in *GetDopustRequest, opts ...grpc.CallOption) (*Dopust, error)
-	GetDopusti(ctx context.Context, in *GetDopustiRequest, opts ...grpc.CallOption) (DopustService_GetDopustiClient, error)
 	UpdateDopust(ctx context.Context, in *UpdateDopustRequest, opts ...grpc.CallOption) (*Dopust, error)
 	DeleteDopust(ctx context.Context, in *GetDopustRequest, opts ...grpc.CallOption) (*DeleteDopustResponse, error)
 	CreateZaposlen(ctx context.Context, in *CreateZaposlenRequest, opts ...grpc.CallOption) (*Zaposlen, error)
@@ -57,38 +56,6 @@ func (c *dopustServiceClient) GetDopust(ctx context.Context, in *GetDopustReques
 		return nil, err
 	}
 	return out, nil
-}
-
-func (c *dopustServiceClient) GetDopusti(ctx context.Context, in *GetDopustiRequest, opts ...grpc.CallOption) (DopustService_GetDopustiClient, error) {
-	stream, err := c.cc.NewStream(ctx, &DopustService_ServiceDesc.Streams[0], "/dopust.DopustService/GetDopusti", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &dopustServiceGetDopustiClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type DopustService_GetDopustiClient interface {
-	Recv() (*Dopust, error)
-	grpc.ClientStream
-}
-
-type dopustServiceGetDopustiClient struct {
-	grpc.ClientStream
-}
-
-func (x *dopustServiceGetDopustiClient) Recv() (*Dopust, error) {
-	m := new(Dopust)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
 }
 
 func (c *dopustServiceClient) UpdateDopust(ctx context.Context, in *UpdateDopustRequest, opts ...grpc.CallOption) (*Dopust, error) {
@@ -151,7 +118,6 @@ func (c *dopustServiceClient) DeleteZaposlen(ctx context.Context, in *GetZaposle
 type DopustServiceServer interface {
 	CreateDopust(context.Context, *CreateDopustRequest) (*Dopust, error)
 	GetDopust(context.Context, *GetDopustRequest) (*Dopust, error)
-	GetDopusti(*GetDopustiRequest, DopustService_GetDopustiServer) error
 	UpdateDopust(context.Context, *UpdateDopustRequest) (*Dopust, error)
 	DeleteDopust(context.Context, *GetDopustRequest) (*DeleteDopustResponse, error)
 	CreateZaposlen(context.Context, *CreateZaposlenRequest) (*Zaposlen, error)
@@ -170,9 +136,6 @@ func (UnimplementedDopustServiceServer) CreateDopust(context.Context, *CreateDop
 }
 func (UnimplementedDopustServiceServer) GetDopust(context.Context, *GetDopustRequest) (*Dopust, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDopust not implemented")
-}
-func (UnimplementedDopustServiceServer) GetDopusti(*GetDopustiRequest, DopustService_GetDopustiServer) error {
-	return status.Errorf(codes.Unimplemented, "method GetDopusti not implemented")
 }
 func (UnimplementedDopustServiceServer) UpdateDopust(context.Context, *UpdateDopustRequest) (*Dopust, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDopust not implemented")
@@ -239,27 +202,6 @@ func _DopustService_GetDopust_Handler(srv interface{}, ctx context.Context, dec 
 		return srv.(DopustServiceServer).GetDopust(ctx, req.(*GetDopustRequest))
 	}
 	return interceptor(ctx, in, info, handler)
-}
-
-func _DopustService_GetDopusti_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(GetDopustiRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(DopustServiceServer).GetDopusti(m, &dopustServiceGetDopustiServer{stream})
-}
-
-type DopustService_GetDopustiServer interface {
-	Send(*Dopust) error
-	grpc.ServerStream
-}
-
-type dopustServiceGetDopustiServer struct {
-	grpc.ServerStream
-}
-
-func (x *dopustServiceGetDopustiServer) Send(m *Dopust) error {
-	return x.ServerStream.SendMsg(m)
 }
 
 func _DopustService_UpdateDopust_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -410,10 +352,117 @@ var DopustService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DopustService_DeleteZaposlen_Handler,
 		},
 	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "dopust.proto",
+}
+
+// StreamDopustClient is the client API for StreamDopust service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type StreamDopustClient interface {
+	DopustStream(ctx context.Context, in *GetDopustiRequest, opts ...grpc.CallOption) (StreamDopust_DopustStreamClient, error)
+}
+
+type streamDopustClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewStreamDopustClient(cc grpc.ClientConnInterface) StreamDopustClient {
+	return &streamDopustClient{cc}
+}
+
+func (c *streamDopustClient) DopustStream(ctx context.Context, in *GetDopustiRequest, opts ...grpc.CallOption) (StreamDopust_DopustStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &StreamDopust_ServiceDesc.Streams[0], "/dopust.StreamDopust/DopustStream", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &streamDopustDopustStreamClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type StreamDopust_DopustStreamClient interface {
+	Recv() (*DatumStreamResponse, error)
+	grpc.ClientStream
+}
+
+type streamDopustDopustStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *streamDopustDopustStreamClient) Recv() (*DatumStreamResponse, error) {
+	m := new(DatumStreamResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// StreamDopustServer is the server API for StreamDopust service.
+// All implementations must embed UnimplementedStreamDopustServer
+// for forward compatibility
+type StreamDopustServer interface {
+	DopustStream(*GetDopustiRequest, StreamDopust_DopustStreamServer) error
+	mustEmbedUnimplementedStreamDopustServer()
+}
+
+// UnimplementedStreamDopustServer must be embedded to have forward compatible implementations.
+type UnimplementedStreamDopustServer struct {
+}
+
+func (UnimplementedStreamDopustServer) DopustStream(*GetDopustiRequest, StreamDopust_DopustStreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method DopustStream not implemented")
+}
+func (UnimplementedStreamDopustServer) mustEmbedUnimplementedStreamDopustServer() {}
+
+// UnsafeStreamDopustServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to StreamDopustServer will
+// result in compilation errors.
+type UnsafeStreamDopustServer interface {
+	mustEmbedUnimplementedStreamDopustServer()
+}
+
+func RegisterStreamDopustServer(s grpc.ServiceRegistrar, srv StreamDopustServer) {
+	s.RegisterService(&StreamDopust_ServiceDesc, srv)
+}
+
+func _StreamDopust_DopustStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(GetDopustiRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(StreamDopustServer).DopustStream(m, &streamDopustDopustStreamServer{stream})
+}
+
+type StreamDopust_DopustStreamServer interface {
+	Send(*DatumStreamResponse) error
+	grpc.ServerStream
+}
+
+type streamDopustDopustStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *streamDopustDopustStreamServer) Send(m *DatumStreamResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+// StreamDopust_ServiceDesc is the grpc.ServiceDesc for StreamDopust service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var StreamDopust_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "dopust.StreamDopust",
+	HandlerType: (*StreamDopustServer)(nil),
+	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "GetDopusti",
-			Handler:       _DopustService_GetDopusti_Handler,
+			StreamName:    "DopustStream",
+			Handler:       _StreamDopust_DopustStream_Handler,
 			ServerStreams: true,
 		},
 	},

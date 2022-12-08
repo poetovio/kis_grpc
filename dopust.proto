@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package dopust;
+
+option go_package = "./";
+
+service DopustService {
+    rpc CreateDopust (CreateDopustRequest) returns (Dopust) {}
+    rpc GetDopust (GetDopustRequest) returns (Dopust) {}
+    rpc GetDopusti (GetDopustiRequest) returns (stream Dopust) {}
+    rpc UpdateDopust (UpdateDopustRequest) returns (Dopust) {}
+    rpc DeleteDopust (GetDopustRequest) returns (DeleteDopustResponse) {}
+
+    rpc CreateZaposlen (CreateZaposlenRequest) returns (Zaposlen) {}
+
+    rpc GetZaposleni (GetZaposleniParams) returns (ZaposlenList) {}
+}
+
+message Dopust {
+    int64 id_dopust = 1;
+    int64 id_zaposlenega = 2;
+    string datumZacetka = 3;
+    string datumKonca = 4;
+    string vrstaDopusta = 5;
+    int64 stevilkaDopusta = 6;
+}
+
+message Zaposlen {
+    int64 id_zaposlenega = 1;
+    string ime = 2;
+    string priimek = 3;
+    string spol = 4;
+    string datumRojstva = 5;
+    string podjetje = 6;
+}
+
+message GetZaposlen {
+    int64 id_zaposlen = 1;
+}
+
+message CreateZaposlenRequest {
+    string ime = 1;
+    string priimek = 2;
+    string spol = 3;
+    string datumRojstva = 4;
+    string podjetje = 5;
+}
+
+message GetDopustRequest {
+    int64 id_dopust = 1;
+}
+
+message UpdateDopustRequest {
+    int64 id = 1;
+    int64 id_zaposlenega = 2;
+    string datumZacetka = 3;
+    string datumKonca = 4;
+    string vrstaDopusta = 5;
+    int64 stevilkaDopusta = 6;
+}
+
+message CreateDopustRequest {
+    int64 id_zaposlenega = 1;
+    string datumZacetka = 2;
+    string datumKonca = 3;
+    string vrstaDopusta = 4;
+    int64 stevilkaDopusta = 5;
+}
+
+message DeleteDopustResponse {
+    bool success = 1;
+}
+
+message GetDopustiRequest {
+    optional int64 page = 1;
+    optional int64 limit = 2;
+}
+
+message GetZaposleniParams {}
+
+message ZaposlenList {
+    repeated Zaposlen zaposleni = 1;
+}
+
+message GetDopustiParams {}
+
+message DopustList {
+    repeated Dopust dopusti = 1;
+}

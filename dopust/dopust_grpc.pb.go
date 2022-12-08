@@ -29,6 +29,7 @@ type DopustServiceClient interface {
 	DeleteDopust(ctx context.Context, in *GetDopustRequest, opts ...grpc.CallOption) (*DeleteDopustResponse, error)
 	CreateZaposlen(ctx context.Context, in *CreateZaposlenRequest, opts ...grpc.CallOption) (*Zaposlen, error)
 	GetZaposleni(ctx context.Context, in *GetZaposleniParams, opts ...grpc.CallOption) (*ZaposlenList, error)
+	UpdateZaposlen(ctx context.Context, in *UpdateZaposlenRequest, opts ...grpc.CallOption) (*Zaposlen, error)
 	DeleteZaposlen(ctx context.Context, in *GetZaposlenRequest, opts ...grpc.CallOption) (*DeleteZaposlenResponse, error)
 }
 
@@ -126,6 +127,15 @@ func (c *dopustServiceClient) GetZaposleni(ctx context.Context, in *GetZaposleni
 	return out, nil
 }
 
+func (c *dopustServiceClient) UpdateZaposlen(ctx context.Context, in *UpdateZaposlenRequest, opts ...grpc.CallOption) (*Zaposlen, error) {
+	out := new(Zaposlen)
+	err := c.cc.Invoke(ctx, "/dopust.DopustService/UpdateZaposlen", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *dopustServiceClient) DeleteZaposlen(ctx context.Context, in *GetZaposlenRequest, opts ...grpc.CallOption) (*DeleteZaposlenResponse, error) {
 	out := new(DeleteZaposlenResponse)
 	err := c.cc.Invoke(ctx, "/dopust.DopustService/DeleteZaposlen", in, out, opts...)
@@ -146,6 +156,7 @@ type DopustServiceServer interface {
 	DeleteDopust(context.Context, *GetDopustRequest) (*DeleteDopustResponse, error)
 	CreateZaposlen(context.Context, *CreateZaposlenRequest) (*Zaposlen, error)
 	GetZaposleni(context.Context, *GetZaposleniParams) (*ZaposlenList, error)
+	UpdateZaposlen(context.Context, *UpdateZaposlenRequest) (*Zaposlen, error)
 	DeleteZaposlen(context.Context, *GetZaposlenRequest) (*DeleteZaposlenResponse, error)
 	mustEmbedUnimplementedDopustServiceServer()
 }
@@ -174,6 +185,9 @@ func (UnimplementedDopustServiceServer) CreateZaposlen(context.Context, *CreateZ
 }
 func (UnimplementedDopustServiceServer) GetZaposleni(context.Context, *GetZaposleniParams) (*ZaposlenList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetZaposleni not implemented")
+}
+func (UnimplementedDopustServiceServer) UpdateZaposlen(context.Context, *UpdateZaposlenRequest) (*Zaposlen, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateZaposlen not implemented")
 }
 func (UnimplementedDopustServiceServer) DeleteZaposlen(context.Context, *GetZaposlenRequest) (*DeleteZaposlenResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteZaposlen not implemented")
@@ -320,6 +334,24 @@ func _DopustService_GetZaposleni_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DopustService_UpdateZaposlen_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateZaposlenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DopustServiceServer).UpdateZaposlen(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dopust.DopustService/UpdateZaposlen",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DopustServiceServer).UpdateZaposlen(ctx, req.(*UpdateZaposlenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _DopustService_DeleteZaposlen_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetZaposlenRequest)
 	if err := dec(in); err != nil {
@@ -368,6 +400,10 @@ var DopustService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetZaposleni",
 			Handler:    _DopustService_GetZaposleni_Handler,
+		},
+		{
+			MethodName: "UpdateZaposlen",
+			Handler:    _DopustService_UpdateZaposlen_Handler,
 		},
 		{
 			MethodName: "DeleteZaposlen",

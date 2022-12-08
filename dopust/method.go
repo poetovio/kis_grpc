@@ -212,3 +212,34 @@ func (s *Server) UpdateDopust(ctx context.Context, input *UpdateDopustRequest) (
 
 	return kreiranDopust, nil
 }
+
+func (s *Server) UpdateZaposlen(ctx context.Context, input *UpdateZaposlenRequest) (*Zaposlen, error) {
+	readBytes, err := ioutil.ReadFile("zaposleni.json")
+	var zaposlen_list *ZaposlenList = &ZaposlenList{}
+	var updejtanId int64 = input.GetIdZaposlenega()
+
+	kreiranUporabnik := &Zaposlen{IdZaposlenega: updejtanId, Ime: input.GetIme(), Priimek: input.GetPriimek(),
+		Spol: input.GetSpol(), DatumRojstva: input.GetDatumRojstva(), Podjetje: input.GetPodjetje()}
+
+	if err := protojson.Unmarshal(readBytes, zaposlen_list); err != nil {
+		log.Fatalf("Napaka pri parasnju jsona -> %v", err)
+	}
+
+	for id, zaposlen := range zaposlen_list.Zaposleni {
+		if zaposlen.GetIdZaposlenega() == updejtanId {
+			zaposlen_list.Zaposleni[id] = kreiranUporabnik
+		}
+	}
+
+	jsonBytes, err := protojson.Marshal(zaposlen_list)
+
+	if err != nil {
+		log.Fatalf("JSON marshilanje failed -> %v", err)
+	}
+
+	if err := ioutil.WriteFile("zaposleni.json", jsonBytes, 0664); err != nil {
+		log.Fatalf("Napaka pri pisanju v datoteko -> %v", err)
+	}
+
+	return kreiranUporabnik, nil
+}

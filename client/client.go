@@ -78,4 +78,20 @@ func main() {
 	Vrsta dopusta -> %s
 	Stevilka dopusta -> %d. dopust
 	`, r5.GetIdDopust(), r5.GetDatumZacetka(), r5.GetDatumKonca(), r5.GetVrstaDopusta(), r5.GetStevilkaDopusta())
+
+	r6, err := client.UpdateZaposlen(ctx, &dopust.UpdateZaposlenRequest{IdZaposlenega: 847, Ime: "Denzel",
+		Priimek: "Washington", Spol: "Moški", DatumRojstva: "1954-12-28",
+		Podjetje: "Hollywood"})
+	if err != nil {
+		log.Fatalf("Napaka pri posodobitvi zaposlenega -> %v", err)
+	}
+
+	log.Printf(`Podatki zaposlenega -> 
+	ID -> %d
+	Ime -> %s
+	Priimek -> %s
+	Spol -> %s
+	Datum rojstva -> %s
+	Podjetje -> %s`, r6.GetIdZaposlenega(), r6.GetIme(), r6.GetPriimek(), r6.GetSpol(), r6.GetDatumRojstva(), r6.GetPodjetje())
+
 }

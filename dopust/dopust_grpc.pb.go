@@ -29,6 +29,7 @@ type DopustServiceClient interface {
 	DeleteDopust(ctx context.Context, in *GetDopustRequest, opts ...grpc.CallOption) (*DeleteDopustResponse, error)
 	CreateZaposlen(ctx context.Context, in *CreateZaposlenRequest, opts ...grpc.CallOption) (*Zaposlen, error)
 	GetZaposleni(ctx context.Context, in *GetZaposleniParams, opts ...grpc.CallOption) (*ZaposlenList, error)
+	DeleteZaposlen(ctx context.Context, in *GetZaposlenRequest, opts ...grpc.CallOption) (*DeleteZaposlenResponse, error)
 }
 
 type dopustServiceClient struct {
@@ -125,6 +126,15 @@ func (c *dopustServiceClient) GetZaposleni(ctx context.Context, in *GetZaposleni
 	return out, nil
 }
 
+func (c *dopustServiceClient) DeleteZaposlen(ctx context.Context, in *GetZaposlenRequest, opts ...grpc.CallOption) (*DeleteZaposlenResponse, error) {
+	out := new(DeleteZaposlenResponse)
+	err := c.cc.Invoke(ctx, "/dopust.DopustService/DeleteZaposlen", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DopustServiceServer is the server API for DopustService service.
 // All implementations must embed UnimplementedDopustServiceServer
 // for forward compatibility
@@ -136,6 +146,7 @@ type DopustServiceServer interface {
 	DeleteDopust(context.Context, *GetDopustRequest) (*DeleteDopustResponse, error)
 	CreateZaposlen(context.Context, *CreateZaposlenRequest) (*Zaposlen, error)
 	GetZaposleni(context.Context, *GetZaposleniParams) (*ZaposlenList, error)
+	DeleteZaposlen(context.Context, *GetZaposlenRequest) (*DeleteZaposlenResponse, error)
 	mustEmbedUnimplementedDopustServiceServer()
 }
 
@@ -163,6 +174,9 @@ func (UnimplementedDopustServiceServer) CreateZaposlen(context.Context, *CreateZ
 }
 func (UnimplementedDopustServiceServer) GetZaposleni(context.Context, *GetZaposleniParams) (*ZaposlenList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetZaposleni not implemented")
+}
+func (UnimplementedDopustServiceServer) DeleteZaposlen(context.Context, *GetZaposlenRequest) (*DeleteZaposlenResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteZaposlen not implemented")
 }
 func (UnimplementedDopustServiceServer) mustEmbedUnimplementedDopustServiceServer() {}
 
@@ -306,6 +320,24 @@ func _DopustService_GetZaposleni_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DopustService_DeleteZaposlen_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetZaposlenRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DopustServiceServer).DeleteZaposlen(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/dopust.DopustService/DeleteZaposlen",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DopustServiceServer).DeleteZaposlen(ctx, req.(*GetZaposlenRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DopustService_ServiceDesc is the grpc.ServiceDesc for DopustService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -336,6 +368,10 @@ var DopustService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetZaposleni",
 			Handler:    _DopustService_GetZaposleni_Handler,
+		},
+		{
+			MethodName: "DeleteZaposlen",
+			Handler:    _DopustService_DeleteZaposlen_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

@@ -57,5 +57,11 @@ func main() {
 	if err != nil {
 		log.Fatalf("Napaka pri brisanju dopusta -> %v", err)
 	}
-	log.Printf("Brisanje je bilo uspesno? -> %t", r3.GetSuccess())
+	log.Printf("Brisanje dopusta je bilo uspesno? -> %t", r3.GetSuccess())
+
+	r4, err := client.DeleteZaposlen(ctx, &dopust.GetZaposlenRequest{IdZaposlen: 81})
+	if err != nil {
+		log.Fatalf("Napaka pri brisanju zaposlenega -> %v", err)
+	}
+	log.Printf("Brisanje zaposlenega je bilo uspesno? -> %t", r4.GetSuccess())
 }

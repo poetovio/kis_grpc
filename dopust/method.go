@@ -135,7 +135,6 @@ func (s *Server) DeleteDopust(ctx context.Context, input *GetDopustRequest) (*De
 		}
 	}
 
-	// dopust_list.Dopusti = append(dopust_list.Dopusti, kreiranDopust)
 	jsonBytes, err := protojson.Marshal(dopust_list)
 
 	if err != nil {
@@ -147,4 +146,37 @@ func (s *Server) DeleteDopust(ctx context.Context, input *GetDopustRequest) (*De
 	}
 
 	return &DeleteDopustResponse{Success: true}, nil
+}
+
+func (s *Server) DeleteZaposlen(ctx context.Context, input *GetZaposlenRequest) (*DeleteZaposlenResponse, error) {
+	readBytes, err := ioutil.ReadFile("zaposleni.json")
+	if err != nil {
+		log.Fatalf("Napaka pri branju datoteke -> %v", err)
+	}
+
+	var zaposlen_list *ZaposlenList = &ZaposlenList{}
+
+	if err := protojson.Unmarshal(readBytes, zaposlen_list); err != nil {
+		log.Fatalf("Napaka pri parasnju jsona -> %v", err)
+	}
+
+	for id, zaposlen := range zaposlen_list.Zaposleni {
+		if zaposlen.GetIdZaposlenega() == input.GetIdZaposlen() {
+			copy(zaposlen_list.Zaposleni[id:], zaposlen_list.Zaposleni[id+1:])
+			zaposlen_list.Zaposleni[len(zaposlen_list.Zaposleni)-1] = nil
+			zaposlen_list.Zaposleni = zaposlen_list.Zaposleni[:len(zaposlen_list.Zaposleni)-1]
+		}
+	}
+
+	jsonBytes, err := protojson.Marshal(zaposlen_list)
+
+	if err != nil {
+		log.Fatalf("JSON marshilanje failed -> %v", err)
+	}
+
+	if err := ioutil.WriteFile("zaposleni.json", jsonBytes, 0664); err != nil {
+		log.Fatalf("Napaka pri pisanju v datoteko -> %v", err)
+	}
+
+	return &DeleteZaposlenResponse{Success: true}, nil
 }

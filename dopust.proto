@@ -14,6 +14,7 @@ service DopustService {
     rpc CreateZaposlen (CreateZaposlenRequest) returns (Zaposlen) {}
 
     rpc GetZaposleni (GetZaposleniParams) returns (ZaposlenList) {}
+    rpc DeleteZaposlen (GetZaposlenRequest) returns (DeleteZaposlenResponse) {}
 }
 
 message Dopust {
@@ -86,4 +87,12 @@ message GetDopustiParams {}
 
 message DopustList {
     repeated Dopust dopusti = 1;
+}
+
+message GetZaposlenRequest {
+    int64 id_zaposlen = 1;
+}
+
+message DeleteZaposlenResponse {
+    bool success = 1;
 }
